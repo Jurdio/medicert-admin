@@ -3,12 +3,26 @@
     <v-row justify="center">
       <v-col cols="12" md="8">
         <v-card class="pa-6 gradient-card" elevation="3">
-          <v-card-title class="text-h5 text-indigo-900">Sign a Certificate</v-card-title>
+          <v-card-title class="text-h5 text-indigo-900 font-weight-bold">
+            Mint Certificate as NFT
+          </v-card-title>
           <v-card-text>
-            <v-form @submit.prevent="generatePDF">
-              <v-text-field v-model="form.name" label="Patient Name" outlined required></v-text-field>
-              <v-text-field v-model="form.id" label="Patient ID" outlined required></v-text-field>
-              <v-text-field v-model="form.date" label="Issue Date" outlined required></v-text-field>
+            <v-form @submit.prevent="mintNFT">
+              <v-text-field
+                  v-model="form.publicKey"
+                  label="Patient Wallet (Public Key)"
+                  outlined
+                  required
+              ></v-text-field>
+
+              <v-file-input
+                  v-model="form.file"
+                  label="Upload Certificate File (PDF)"
+                  accept=".pdf"
+                  outlined
+                  required
+              ></v-file-input>
+
               <v-select
                   v-model="form.type"
                   :items="certificateTypes"
@@ -16,17 +30,15 @@
                   outlined
                   required
               ></v-select>
+
               <v-textarea
                   v-model="form.text"
-                  label="Conclusion / Certificate Text"
+                  label="Optional Description / Notes"
                   outlined
-                  required
               ></v-textarea>
-              <v-btn
-                  class="mt-4 gradient-btn"
-                  type="submit"
-              >
-                Sign and Save as PDF
+
+              <v-btn class="mt-4 gradient-btn" type="submit">
+                Mint NFT
               </v-btn>
             </v-form>
           </v-card-text>
@@ -38,33 +50,25 @@
 
 <script setup>
 import { ref } from 'vue';
-import jsPDF from 'jspdf';
 
 const form = ref({
-  name: '',
-  id: '',
-  date: new Date().toISOString().slice(0, 10),
+  publicKey: '',
+  file: null,
   type: '',
   text: '',
 });
 
 const certificateTypes = [
   'Medical Certificate',
-  'Health Statement',
-  'School Clearance',
+  'Vaccination Proof',
   'Workplace Clearance',
+  'School Clearance',
 ];
 
-function generatePDF() {
-  const doc = new jsPDF();
-  doc.text('Medical Certificate', 10, 10);
-  doc.text(`Patient Name: ${form.value.name}`, 10, 20);
-  doc.text(`Patient ID: ${form.value.id}`, 10, 30);
-  doc.text(`Issue Date: ${form.value.date}`, 10, 40);
-  doc.text(`Type: ${form.value.type}`, 10, 50);
-  doc.text('Conclusion:', 10, 60);
-  doc.text(form.value.text, 10, 70);
-  doc.save(`${form.value.name}_certificate.pdf`);
+function mintNFT() {
+  console.log('Minting for', form.value.publicKey);
+  console.log('Uploading file:', form.value.file);
+  // Далі логіка: upload -> metadata -> mint
 }
 </script>
 
@@ -72,9 +76,15 @@ function generatePDF() {
 .gradient-card {
   background: linear-gradient(135deg, #ffffff, #e0f2f1);
   border-radius: 16px;
+  font-family: 'Poppins', sans-serif;
 }
 .gradient-btn {
   background: linear-gradient(90deg, #6366f1, #4f46e5);
   color: white;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+}
+.v-card-title {
+  font-family: 'Poppins', sans-serif;
 }
 </style>
