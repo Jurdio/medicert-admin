@@ -4,7 +4,7 @@
       <v-col cols="12" md="8">
         <v-card class="pa-6 gradient-card" elevation="3">
           <v-card-title class="text-h5 text-indigo-900 font-weight-bold">
-            Mint Certificate as NFT
+            Protect Certificate
           </v-card-title>
           <v-card-text>
             <v-form @submit.prevent="mintNFT">
@@ -13,7 +13,17 @@
                   label="Patient Wallet (Public Key)"
                   outlined
                   required
+                  class="mb-3"
               ></v-text-field>
+
+              <vue-tel-input
+                  v-model="form.phone"
+                  :input-options="{ showDialCode: true }"
+                  :valid-character-only="true"
+                  placeholder="Enter patient phone number"
+                  class="mb-6"
+              />
+
 
               <v-select
                   v-model="form.type"
@@ -51,7 +61,7 @@
               </div>
 
               <v-btn class="mt-6 gradient-btn" type="submit">
-                Mint NFT
+                Protect via blockchain
               </v-btn>
             </v-form>
           </v-card-text>
@@ -63,9 +73,12 @@
 
 <script setup>
 import { ref } from 'vue';
+import { VueTelInput } from 'vue-tel-input';
+
 
 const form = ref({
   publicKey: '',
+  phone: '',
   file: null,
   type: '',
   text: '',
@@ -80,6 +93,11 @@ const certificateTypes = [
   'Workplace Clearance',
   'School Clearance',
 ];
+
+function validatePhone(value) {
+  const phoneRegex = /^\+?[1-9]\d{6,14}$/;
+  return phoneRegex.test(value) || 'Invalid phone number. Use international format (e.g. +123456789)';
+}
 
 function handleDrop(e) {
   dragActive.value = false;
@@ -98,6 +116,8 @@ function handleFileChange(e) {
 
 function mintNFT() {
   if (!form.value.file) return alert('Please upload a PDF file.');
+  if (!validatePhone(form.value.phone) === true) return alert('Invalid phone number');
+
   console.log('Minting for', form.value.publicKey);
   console.log('Uploading file:', form.value.file);
 }
