@@ -15,14 +15,6 @@
                   required
               ></v-text-field>
 
-              <v-file-input
-                  v-model="form.file"
-                  label="Upload Certificate File (PDF)"
-                  accept=".pdf"
-                  outlined
-                  required
-              ></v-file-input>
-
               <v-select
                   v-model="form.type"
                   :items="certificateTypes"
@@ -37,7 +29,28 @@
                   outlined
               ></v-textarea>
 
-              <v-btn class="mt-4 gradient-btn" type="submit">
+              <!-- Custom File Drop Zone -->
+              <div
+                  class="file-drop-zone mt-4"
+                  @dragover.prevent="dragActive = true"
+                  @dragleave.prevent="dragActive = false"
+                  @drop.prevent="handleDrop"
+              >
+                <div class="file-drop-label">
+                  <v-icon size="36" color="#ff6b6b">mdi-cloud-upload</v-icon>
+                  <p>Drag & Drop PDF here or click to upload</p>
+                  <input
+                      ref="fileInput"
+                      type="file"
+                      accept=".pdf"
+                      @change="handleFileChange"
+                      class="file-input"
+                  />
+                  <p v-if="form.file" class="file-name">📄 {{ form.file.name }}</p>
+                </div>
+              </div>
+
+              <v-btn class="mt-6 gradient-btn" type="submit">
                 Mint NFT
               </v-btn>
             </v-form>
@@ -58,6 +71,9 @@ const form = ref({
   text: '',
 });
 
+const dragActive = ref(false);
+const fileInput = ref(null);
+
 const certificateTypes = [
   'Medical Certificate',
   'Vaccination Proof',
@@ -65,10 +81,25 @@ const certificateTypes = [
   'School Clearance',
 ];
 
+function handleDrop(e) {
+  dragActive.value = false;
+  const files = e.dataTransfer.files;
+  if (files.length && files[0].type === 'application/pdf') {
+    form.value.file = files[0];
+  }
+}
+
+function handleFileChange(e) {
+  const file = e.target.files[0];
+  if (file && file.type === 'application/pdf') {
+    form.value.file = file;
+  }
+}
+
 function mintNFT() {
+  if (!form.value.file) return alert('Please upload a PDF file.');
   console.log('Minting for', form.value.publicKey);
   console.log('Uploading file:', form.value.file);
-  // Далі логіка: upload -> metadata -> mint
 }
 </script>
 
@@ -79,12 +110,47 @@ function mintNFT() {
   font-family: 'Poppins', sans-serif;
 }
 .gradient-btn {
-  background: linear-gradient(90deg, #6366f1, #4f46e5);
+  background: linear-gradient(90deg, #ff6b6b, #ff3d71);
   color: white;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
+  transition: background 0.3s ease;
+}
+.gradient-btn:hover {
+  background: linear-gradient(90deg, #ff3d71, #e62958);
 }
 .v-card-title {
   font-family: 'Poppins', sans-serif;
+}
+
+.file-drop-zone {
+  border: 2px dashed #ff6b6b;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+.file-drop-zone:hover {
+  border-color: #e62958;
+}
+.file-drop-label {
+  font-family: 'Poppins', sans-serif;
+  color: #444;
+}
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.file-name {
+  font-size: 14px;
+  margin-top: 8px;
+  color: #333;
 }
 </style>
