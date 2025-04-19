@@ -74,7 +74,7 @@ function logout() {
 
 .nav-btn {
   transition: background-color 0.3s ease;
-  border-radius: 12px;
+  border-radius: 12px !important;
   margin: 4px 8px;
   padding-left: 16px;
 }
