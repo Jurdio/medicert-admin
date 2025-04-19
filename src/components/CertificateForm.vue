@@ -1,7 +1,8 @@
 <template>
-  <v-container>
-    <v-row justify="center">
+  <v-container class="fill-height">
+    <v-row justify="center" align="center" class="fill-height">
       <v-col cols="12" md="8">
+        <template v-if="!isSuccess">
         <v-card class="pa-6 gradient-card" elevation="3">
           <v-card-title class="text-h5 text-indigo-900 font-weight-bold">
             Protect Certificate
@@ -13,6 +14,7 @@
                   label="Patient Wallet (Public Key)"
                   outlined
                   required
+                  density="compact"
                   class="mb-3"
               ></v-text-field>
 
@@ -22,6 +24,7 @@
                   :valid-character-only="true"
                   placeholder="Enter patient phone number"
                   class="mb-6"
+                  density="compact"
               />
 
 
@@ -30,13 +33,15 @@
                   :items="certificateTypes"
                   label="Certificate Type"
                   outlined
-                  required
+                  requiredї
+                  density="compact"
               ></v-select>
 
               <v-textarea
                   v-model="form.text"
                   label="Optional Description / Notes"
                   outlined
+                  density="compact"
               ></v-textarea>
 
               <!-- Custom File Drop Zone -->
@@ -56,7 +61,11 @@
                       @change="handleFileChange"
                       class="file-input"
                   />
-                  <p v-if="form.file" class="file-name">📄 {{ form.file.name }}</p>
+                  <p v-if="form.file" class="file-name">📄 {{ form.file.name }}
+                    <v-btn icon @click="form.file = null" size="x-small">
+                      <v-icon size="16">mdi-close</v-icon>
+                    </v-btn>
+                  </p>
                 </div>
               </div>
 
@@ -66,6 +75,21 @@
             </v-form>
           </v-card-text>
         </v-card>
+        </template>
+        <template v-else>
+          <v-card class="pa-6 gradient-card" elevation="3">
+            <div class="success-layout text-center py-12">
+              <v-icon size="96" color="green" class="mb-4">mdi-check-circle-outline</v-icon>
+              <h2 class="text-h5 font-weight-bold mb-2">Draft successfully created</h2>
+              <p class="mb-6">
+                The certificate draft has been successfully created. Once the patient completes the payment,
+                the data will be recorded on the blockchain.
+              </p>
+              <v-btn class="gradient-btn" @click="resetForm">Protect another certificate</v-btn>
+            </div>
+
+          </v-card>
+        </template>
       </v-col>
     </v-row>
   </v-container>
@@ -74,8 +98,9 @@
 <script setup>
 import { ref } from 'vue';
 import { VueTelInput } from 'vue-tel-input';
+import axios from 'axios';
 
-
+const successMessage = ref('');
 const form = ref({
   publicKey: '',
   phone: '',
@@ -83,9 +108,12 @@ const form = ref({
   type: '',
   text: '',
 });
+const isSuccess = ref(false); // чи форма завершена
+
 
 const dragActive = ref(false);
 const fileInput = ref(null);
+const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
 const certificateTypes = [
   'Medical Certificate',
@@ -96,31 +124,86 @@ const certificateTypes = [
 
 function validatePhone(value) {
   const phoneRegex = /^\+?[1-9]\d{6,14}$/;
-  return phoneRegex.test(value) || 'Invalid phone number. Use international format (e.g. +123456789)';
+  return phoneRegex.test(value) || 'Invalid phone number';
 }
+function resetForm() {
+  form.value = {
+    publicKey: '',
+    phone: '',
+    file: null,
+    type: '',
+    text: '',
+  };
+  isSuccess.value = false;
+  successMessage.value = '';
+}
+
 
 function handleDrop(e) {
   dragActive.value = false;
   const files = e.dataTransfer.files;
-  if (files.length && files[0].type === 'application/pdf') {
-    form.value.file = files[0];
+  if (files.length !== 1 || files[0].type !== 'application/pdf') {
+    alert('Please drop exactly one PDF file.');
+    return;
   }
+  form.value.file = files[0];
 }
 
 function handleFileChange(e) {
   const file = e.target.files[0];
-  if (file && file.type === 'application/pdf') {
-    form.value.file = file;
+  if (!file || file.type !== 'application/pdf') {
+    alert('Only PDF files are allowed.');
+    return;
+  }
+  form.value.file = file;
+}
+
+async function mintNFT() {
+  successMessage.value = '';
+  if (!form.value.file) return alert('Please upload a PDF file.');
+  if (!validatePhone(form.value.phone)) return alert('Invalid phone number');
+
+  try {
+    // 1. Upload file
+    const fileData = new FormData();
+    fileData.append('file', form.value.file);
+
+    const { data: { ipfs_hash } } = await axios.post(
+        `${SERVER_ADDRESS}/v1/ipfs/files`,
+        fileData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+    );
+
+    // 2. Upload metadata
+    const metadata = {
+      name: 'Medical Certificate #123',
+      symbol: 'MEDCERT',
+      description: form.value.text || 'Довідка про придатність до праці',
+      file: `ipfs://${ipfs_hash}`,
+    };
+
+    const { data: metadataResponse } = await axios.post(
+        `${SERVER_ADDRESS}/v1/ipfs/metadata`,
+        metadata
+    );
+
+    //3. Create draft on backend
+    await axios.post(`${SERVER_ADDRESS}/v1/nft/draft`, {
+      publicKey: form.value.publicKey,
+      phone: form.value.phone,
+      type: form.value.type,
+      metadataHash: metadataResponse.ipfs_hash || metadataResponse.hash || '',
+    });
+    isSuccess.value = true;
+    successMessage.value = '✅ Повідомлення надіслано. Чернетка створена!';
+  } catch (err) {
+    console.error(err);
+    alert('❌ Помилка при створенні сертифіката. Спробуйте ще раз.');
   }
 }
 
-function mintNFT() {
-  if (!form.value.file) return alert('Please upload a PDF file.');
-  if (!validatePhone(form.value.phone) === true) return alert('Invalid phone number');
-
-  console.log('Minting for', form.value.publicKey);
-  console.log('Uploading file:', form.value.file);
-}
 </script>
 
 <style scoped>
@@ -173,4 +256,10 @@ function mintNFT() {
   margin-top: 8px;
   color: #333;
 }
+.success-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 </style>
