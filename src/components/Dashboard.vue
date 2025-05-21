@@ -26,29 +26,31 @@
 
     <!-- ===== Два нижніх блоки ===== -->
     <div class="grid">
-      <!-- Workout Progress -->
+      <!-- Certificates per Day -->
       <div class="col-12 md:col-6">
         <Card>
-          <template #title>Workout Progress</template>
+          <template #title>Certificates Generated (Last 7 days)</template>
           <template #content>
             <Chart type="bar" :data="chartData" :options="chartOptions" style="width:100%" />
           </template>
         </Card>
       </div>
 
-      <!-- Recent Workouts -->
+      <!-- Recent Certificates -->
       <div class="col-12 md:col-6">
         <Card>
-          <template #title>Recent Workouts</template>
+          <template #title>Recent Certificates</template>
           <template #content>
             <ul class="list-none m-0 p-0">
-              <li v-for="w in recent" :key="w.name" class="flex justify-content-between align-items-center py-3 border-bottom-1 surface-border">
+              <li v-for="c in recent" :key="c.id"
+                  class="flex justify-content-between align-items-center py-3 border-bottom-1 surface-border">
                 <div>
-                  <i class="pi pi-calendar mr-2 text-600"></i>
-                  <span class="font-medium text-900">{{ w.name }}</span><br>
-                  <span class="text-600 text-sm">{{ w.date }}</span>
+                  <i class="pi pi-user mr-2 text-600"></i>
+                  <span class="font-medium text-900">{{ c.patient }}</span><br>
+                  <span class="text-600 text-sm">{{ c.type }} • {{ c.date }}</span>
                 </div>
-                <Tag :value="w.duration" severity="success" rounded />
+                <Tag :value="c.status"
+                     :severity="statusColor[c.status]" rounded />
               </li>
             </ul>
           </template>
@@ -65,48 +67,74 @@ import Card  from 'primevue/card'
 import Chart from 'primevue/chart'
 import Tag   from 'primevue/tag'
 
-/* ===== Статистика у верхніх картках ===== */
+/* ===== Верхні картки ===== */
 const statCards = [
-  { label: 'Workouts',            value: '12',     icon: 'pi pi-heart',         iconBg: 'bg-primary'  },
-  { label: 'Calories Burned',     value: '3,500',  icon: 'pi pi-fire',          iconBg: 'bg-red-500'  },
-  { label: 'Total Time',          value: '8h 30m', icon: 'pi pi-clock',         iconBg: 'bg-green-500'},
-  { label: 'Progress',            value: '15 %',   icon: 'pi pi-chart-line-up', iconBg: 'bg-purple-500'}
+  {
+    label : 'Certificates Created',
+    value : '24',
+    icon  : 'pi pi-file',
+    iconBg: 'bg-blue-500'
+  },
+  {
+    label : 'Drafts Pending',
+    value : '3',
+    icon  : 'pi pi-clock',
+    iconBg: 'bg-orange-400'
+  },
+  {
+    label : 'Minted on Chain',
+    value : '18',
+    icon  : 'pi pi-lock',
+    iconBg: 'bg-green-500'
+  },
+  {
+    label : 'Verification Success',
+    value : '97 %',
+    icon  : 'pi pi-check-circle',
+    iconBg: 'bg-purple-500'
+  }
 ]
 
-/* ===== Chart.js Bar Chart ===== */
+/* ===== Chart.js: Certs за тиждень ===== */
 const chartData = {
-  labels: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
-  datasets: [
+  labels   : ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  datasets : [
     {
-      label: 'Workout Duration (minutes)',
-      backgroundColor: '#42A5F5',
-      data: [90, 30, 45, 75, 25, 80, 70]
+      label           : 'Certificates',
+      backgroundColor : '#42A5F5',
+      data            : [4, 2, 5, 3, 6, 2, 2]
     }
   ]
 }
 const chartOptions = {
-  plugins: { legend: { display: false } },
-  scales : { y: { ticks: { stepSize: 25 } } }
+  plugins: { legend: { display:false }},
+  scales : {
+    y: { beginAtZero:true, ticks:{ stepSize:1 }}
+  }
 }
 
-/* ===== Список останніх тренувань ===== */
+/* ===== Останні сертифікати ===== */
 const recent = [
-  { name: 'Full Body Workout',     date: '2023-06-01', duration: '45 min' },
-  { name: 'Upper Body Strength',   date: '2023-05-30', duration: '60 min' },
-  { name: 'HIIT Cardio',           date: '2023-05-28', duration: '30 min' },
-  { name: 'Leg Day',               date: '2023-05-26', duration: '50 min' }
+  { id:1, patient:'Іван Петров',      type:'Medical Certificate', date:'2025-05-21', status:'Minted'   },
+  { id:2, patient:'Олена Коваль',     type:'Vaccination Proof',   date:'2025-05-20', status:'Paid'     },
+  { id:3, patient:'Павло Романюк',    type:'Work Clearance',      date:'2025-05-19', status:'Draft'    },
+  { id:4, patient:'Марія Дудник',     type:'School Clearance',    date:'2025-05-18', status:'Revoked'  }
 ]
+
+/* колір тегів */
+const statusColor = {
+  Minted : 'success',
+  Paid   : 'info',
+  Draft  : 'warning',
+  Revoked: 'danger'
+}
 </script>
 
 <style scoped>
-/* Квадратні іконки в інфо-картах */
-.bg-primary, .bg-red-500, .bg-green-500, .bg-purple-500 {
-  border-radius: 0.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.5rem;
+/* Квадратні іконки у картках */
+.bg-blue-500, .bg-orange-400, .bg-green-500, .bg-purple-500 {
+  border-radius: .5rem;
+  display:flex; align-items:center; justify-content:center;
+  width:3rem; height:3rem; font-size:1.5rem
 }
 </style>
