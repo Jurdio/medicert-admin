@@ -1,16 +1,15 @@
 <template>
-  <Toast />                         <!-- контейнер тостів -->
-  <!-- Sidebar як окремий компонент -->
-  <SideMenu v-model:visible="sidebarOpen" />
+  <Toast />
 
-  <!-- Контент сторінок -->
-  <div class="flex-1">
+  <!-- Фіксований сайдбар (нічого не міняємо) -->
+  <SideMenu />
+
+  <!-- Контент — відсуваємо на ширину бару -->
+  <div class="p-4" style="margin-left:260px">
     <router-view />
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import Button from 'primevue/button'
 import SideMenu from '@/components/SideMenu.vue'
 </script>
