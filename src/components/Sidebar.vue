@@ -1,102 +1,39 @@
 <template>
-  <v-navigation-drawer app permanent color="#f0f4ff" width="300" class="custom-sidebar">
-    <v-list dense class="fill-height d-flex flex-column justify-space-between">
-      <!-- Верхня частина: лого + пункти меню -->
-      <div>
-        <v-list-item class="logo-item">
-          <v-list-item-avatar size="72">
-            <v-img src="./src/assets/logo.svg" alt="Doctor Avatar" />
-          </v-list-item-avatar>
-        </v-list-item>
+  <div class="card flex justify-content-start">
+    <Button icon="pi pi-bars" @click="visible = true" />
 
-        <v-list-item
-            v-for="item in menuItems"
-            :key="item.title"
-            link
-            class="nav-btn"
-            :to="item.route"
-            :class="{ 'nav-btn--active': $route.path === item.route }"
-            tag="router-link"
-        >
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item>
+    <Sidebar v-model:visible="visible" position="left">
+      <template #container="{ closeCallback }">
+        <div class="flex flex-column h-full">
+          <!-- Header -->
+          <div class="flex align-items-center justify-content-between px-4 pt-3 flex-shrink-0">
+            <span class="inline-flex align-items-center gap-2">
+              <img src="./src/assets/logo.svg" alt="Logo" width="35" height="35" />
+              <span class="font-semibold text-2xl text-primary">MedCert</span>
+            </span>
+            <Button type="button" @click="closeCallback" icon="pi pi-times" rounded outlined class="h-2rem w-2rem" />
+          </div>
 
-      </div>
+          <!-- Menu -->
+          <div class="p-4 flex flex-column gap-3">
+            <Button label="Protection" icon="pi pi-shield" />
+            <Button label="Verify" icon="pi pi-check-circle" />
+            <Button label="History" icon="pi pi-clock" />
+          </div>
 
-      <!-- Нижня частина: logout -->
-      <div>
-        <div class="version-container">
-          <div class="version-label">v0.1</div>
+          <!-- Footer -->
+          <div class="mt-auto p-4 flex justify-content-between align-items-center border-top-1 surface-border">
+            <span class="text-sm text-500">v0.1</span>
+            <Button label="Logout" icon="pi pi-sign-out" severity="danger" text />
+          </div>
         </div>
-        <v-divider></v-divider>
-        <v-list-item link class="nav-btn" @click="logout">
-          <v-list-item-title class="d-flex align-center">
-            <v-icon class="mr-2">mdi-logout</v-icon>
-            Logout
-          </v-list-item-title>
-        </v-list-item>
-
-      </div>
-    </v-list>
-  </v-navigation-drawer>
+      </template>
+    </Sidebar>
+  </div>
 </template>
 
 <script setup>
-import {ref} from "vue";
-
-const menuItems = [
-  { title: 'Protection', route: '/protection' },
-  { title: 'Verify', route: '/verify' },
-  { title: 'History', route: '/history' },
-];
-
-
-const selectedItem = ref('Protection');
-
-function logout() {
-  console.log('Logging out...');
-  // логіка вилогінювання (очищення токена, редирект, тощо)
-}
+import { ref } from 'vue'
+import Sidebar from 'primevue/sidebar'
+import Button from 'primevue/button'
 </script>
-
-<style scoped>
-.custom-sidebar {
-  background: linear-gradient(180deg, #fbeaea 0%, #FFF5F5 100%);
-  box-shadow: inset -4px 0 6px -4px rgba(0, 0, 0, 0.25);
-  border-right: none;
-  font-family: 'Poppins', sans-serif;
-}
-
-.logo-item {
-  margin-bottom: 50px;
-  justify-content: center;
-}
-
-.nav-btn {
-  transition: background-color 0.3s ease;
-  border-radius: 12px !important;
-  margin: 4px 8px;
-  padding-left: 16px;
-}
-
-.nav-btn:hover,
-.nav-btn--active{
-  background-color: rgb(255, 180, 180);
-}
-
-.version-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
-.version-label {
-  font-size: 12px;
-  font-weight: 500;
-  background-color: rgb(255, 180, 180);
-  color: #ffffff;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-family: 'Poppins', sans-serif;
-}
-</style>
