@@ -3,6 +3,8 @@ import App        from './App.vue'
 import router     from './router'
 
 /* PrimeVue core */
+
+import Chart    from 'primevue/chart'   // якщо реєструєш глобально
 import PrimeVue   from 'primevue/config'
 import Ripple     from 'primevue/ripple'
 import StyleClass from 'primevue/styleclass'
