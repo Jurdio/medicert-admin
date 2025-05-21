@@ -1,26 +1,32 @@
-// main.js
 import { createApp } from 'vue'
 import App        from './App.vue'
 import router     from './router'
 
-/* PrimeVue */
+/* PrimeVue core */
 import PrimeVue   from 'primevue/config'
-import Ripple     from 'primevue/ripple'       // директива ripple
-import StyleClass from 'primevue/styleclass'   // директива styleclass
+import Ripple     from 'primevue/ripple'
+import StyleClass from 'primevue/styleclass'
+/* Toast service */
+import ToastService from 'primevue/toastservice'
 
 /* CSS */
-import 'primevue/resources/themes/saga-blue/theme.css' // можеш змінити тему
+import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
-import 'primeflex/primeflex.css'              // ⬅️ УТИЛІТИ flex/spacing
+import 'primeflex/primeflex.css'
 
 const app = createApp(App)
 
 app.use(router)
-app.use(PrimeVue, { ripple: true })           // увімкнули ripple глобально
+app.use(PrimeVue, { ripple: true })
+app.use(ToastService)                   // ⬅️ 1. Підключили сервіс Toast
 
-/* Директиви, які потрібні для демо-сайдбару */
+/* директиви */
 app.directive('ripple', Ripple)
 app.directive('styleclass', StyleClass)
+
+/* глобальний компонент Toast */
+import Toast from 'primevue/toast'
+app.component('Toast', Toast)           // ⬅️ 2. Зареєстрували компонент
 
 app.mount('#app')
