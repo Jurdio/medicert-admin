@@ -1,67 +1,83 @@
 <template>
-  <div class="p-fluid" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
-    <h2>Protect Certificate</h2>
+  <div class="p-fluid p-4">
+    <h2 class="mb-4">Protect Certificate</h2>
 
-    <form @submit.prevent="mintNFT" class="p-fluid">
+    <form @submit.prevent="mintNFT" class="p-fluid flex flex-column gap-4">
 
-      <InputGroup>
-        <InputGroupAddon>
-          <i class="pi pi-key" />
-        </InputGroupAddon>
-        <InputText v-model="form.publicKey" placeholder="Patient Wallet (Public Key)" required />
-      </InputGroup>
+      <!-- Ряд: Wallet + Phone -->
+      <div class="grid formgrid">
+        <div class="col-12 md:col-6">
+          <InputGroup>
+            <InputGroupAddon>
+              <i class="pi pi-key" />
+            </InputGroupAddon>
+            <InputText v-model="form.publicKey" placeholder="Patient Wallet" required />
+          </InputGroup>
+        </div>
 
-      <InputGroup class="p-mt-3">
-        <InputGroupAddon>
-          <i class="pi pi-phone" />
-        </InputGroupAddon>
-        <InputMask
-            v-model="form.phone"
-            mask="+999 999 999 9999"
-            placeholder="+XXX XXX XXX XXXX"
-            required
-        />
-      </InputGroup>
-
-      <div class="p-field p-mt-3">
-        <Dropdown
-            v-model="form.type"
-            :options="certificateTypes"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select Certificate Type"
-            showClear
-        />
+        <div class="col-12 md:col-6">
+          <InputGroup>
+            <InputGroupAddon>
+              <i class="pi pi-phone" />
+            </InputGroupAddon>
+            <InputMask
+                v-model="form.phone"
+                mask="+999 999 999 9999"
+                placeholder="+XXX XXX XXX XXXX"
+                required
+            />
+          </InputGroup>
+        </div>
       </div>
 
-      <div class="p-field p-mt-3">
+      <!-- Ряд: Type + Upload -->
+      <div class="grid formgrid">
+        <div class="col-12 md:col-6">
+          <Dropdown
+              v-model="form.type"
+              :options="certificateTypes"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Certificate Type"
+              showClear
+              class="w-full"
+          />
+        </div>
+
+        <div class="col-12 md:col-6">
+          <FileUpload
+              name="pdf"
+              accept="application/pdf"
+              mode="advanced"
+              :auto="false"
+              :multiple="false"
+              chooseLabel="Choose / Drag PDF"
+              @select="onSelect"
+              :customUpload="true"
+              @uploader="noop"
+              class="w-full"
+          />
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div>
         <Textarea
             v-model="form.text"
             rows="3"
             autoResize
             placeholder="Optional Description / Notes"
+            class="w-full"
         />
       </div>
 
-      <div class="p-field p-mt-3">
-        <FileUpload
-            name="pdf"
-            accept="application/pdf"
-            mode="advanced"
-            :auto="false"
-            :multiple="false"
-            chooseLabel="Choose or drag PDF"
-            @select="onSelect"
-            :customUpload="true"
-            @uploader="noop"
-        />
-      </div>
-
-      <div class="p-field p-mt-4">
+      <!-- Submit -->
+      <div>
         <Button type="submit" label="Protect via blockchain" icon="pi pi-lock" />
       </div>
     </form>
 
+    <!-- Success Dialog -->
     <Dialog v-model:visible="isSuccess" modal header="Success" :closable="false">
       <div class="p-text-center">
         <i class="pi pi-check-circle" style="font-size: 4rem; color: green;" />
@@ -71,14 +87,8 @@
       </div>
     </Dialog>
   </div>
-  <Button
-      label="Protect via blockchain"
-      icon="pi pi-lock"
-      severity="primary"
-      iconPos="left"
-  />
-
 </template>
+
 
 <script setup>
 import {ref} from 'vue'
