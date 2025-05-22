@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import App        from './App.vue'
 import router     from './router'
-import './assets/main.css'
 
 /* PrimeVue core */
 
@@ -13,10 +12,12 @@ import StyleClass from 'primevue/styleclass'
 import ToastService from 'primevue/toastservice'
 
 /* CSS */
-import 'primevue/resources/themes/saga-blue/theme.css'
+import 'primevue/resources/themes/lara-light-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
+import './assets/main.css'
+
 
 
 const app = createApp(App)
