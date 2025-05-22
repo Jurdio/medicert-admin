@@ -19,27 +19,30 @@ const props = defineProps({
 <style scoped>
 .left-sidebar {
   width: 64px;
-  background-color: #007857;
+  background-color: #0f1c3f;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 1rem;
-  box-shadow: none;
-  border: none;
 }
 
 .icon-wrapper {
   padding: 1rem;
   cursor: pointer;
   border-radius: 8px;
-  color: #fff;
+  color: #ffffff;
   margin-bottom: 0.5rem;
   transition: background-color 0.2s;
 }
 
-.icon-wrapper:hover,
 .icon-wrapper.active {
-  background-color: #01a66e;
+  background-color: #4389f8;
+  color: #ffffff;
 }
+
+.icon-wrapper:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 </style>

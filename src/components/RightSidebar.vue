@@ -25,15 +25,14 @@ const activeSection = computed(() => props.sections[props.selectedKey])
 
 <style scoped>
 .right-sidebar {
-  width: 220px;
-  background-color: #00c389;
+  width: 260px;
+  background: linear-gradient(145deg, #16203c, #22335a);
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 1rem 1rem 0 1rem;
-  color: #fff;
-  box-shadow: none;
-  border: none;
+  padding: 1.5rem 1rem 0 1rem;
+  color: #e2f0ff;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
 .section-title {
@@ -53,8 +52,12 @@ const activeSection = computed(() => props.sections[props.selectedKey])
   transition: background-color 0.2s;
 }
 
-.nav-btn.active,
 .nav-btn:hover {
-  background-color: #01956c;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn.active {
+  background-color: #4389f8;
+  color: #ffffff;
 }
 </style>
