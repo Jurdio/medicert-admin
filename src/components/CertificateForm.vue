@@ -1,93 +1,82 @@
 <template>
-  <div class="p-fluid p-4">
-    <h2 class="mb-4">Protect Certificate</h2>
+  <div class="p-fluid">
+    <form @submit.prevent="mintNFT" class="grid formgrid">
+      <!-- Ліва колонка -->
+      <div
+          class="col-12 md:col-6 flex flex-column gap-4 surface-card p-3"
+          style="min-height: 100%; height: 100%;"
+      >
+        <InputGroup>
+          <InputGroupAddon><i class="pi pi-key" /></InputGroupAddon>
+          <InputText v-model="form.publicKey" placeholder="Patient Wallet" required />
+        </InputGroup>
 
-    <form @submit.prevent="mintNFT" class="p-fluid flex flex-column gap-4">
+        <InputGroup>
+          <InputGroupAddon><i class="pi pi-phone" /></InputGroupAddon>
+          <InputMask
+              v-model="form.phone"
+              mask="+999 999 999 9999"
+              placeholder="+XXX XXX XXX XXXX"
+              required
+          />
+        </InputGroup>
 
-      <!-- Ряд: Wallet + Phone -->
-      <div class="grid formgrid">
-        <div class="col-12 md:col-6">
-          <InputGroup>
-            <InputGroupAddon>
-              <i class="pi pi-key" />
-            </InputGroupAddon>
-            <InputText v-model="form.publicKey" placeholder="Patient Wallet" required />
-          </InputGroup>
-        </div>
 
-        <div class="col-12 md:col-6">
-          <InputGroup>
-            <InputGroupAddon>
-              <i class="pi pi-phone" />
-            </InputGroupAddon>
-            <InputMask
-                v-model="form.phone"
-                mask="+999 999 999 9999"
-                placeholder="+XXX XXX XXX XXXX"
-                required
-            />
-          </InputGroup>
+        <Dropdown
+            v-model="form.type"
+            :options="certificateTypes"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Certificate Type"
+            showClear
+            class="w-full"
+        />
+
+        <div class="flex-grow-1 flex flex-column">
+          <label>Description</label>
+          <Textarea
+              v-model="form.text"
+              rows="6"
+              autoResize="false"
+              class="w-full h-full"
+              style="resize: none; overflow: auto;"
+          />
         </div>
       </div>
 
-      <!-- Ряд: Type + Upload -->
-      <div class="grid formgrid">
-        <div class="col-12 md:col-6">
-          <Dropdown
-              v-model="form.type"
-              :options="certificateTypes"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Certificate Type"
-              showClear
-              class="w-full"
-          />
-        </div>
-
-        <div class="col-12 md:col-6">
+      <!-- Права колонка -->
+      <div
+          class="col-12 md:col-6 flex flex-column justify-between surface-card p-3"
+          style="min-height: 100%; height: 100%;"
+      >
+        <div class="flex-grow-1">
           <FileUpload
               name="pdf"
               accept="application/pdf"
               mode="advanced"
               :auto="false"
               :multiple="false"
-              chooseLabel="Choose / Drag PDF"
+              :showUploadButton="false"
+              :showCancelButton="false"
+              customUpload
               @select="onSelect"
-              :customUpload="true"
               @uploader="noop"
+              :maxFileSize="10000000"
               class="w-full"
+              chooseLabel="Choose or Drag PDF"
           />
         </div>
-      </div>
 
-      <!-- Description -->
-      <div>
-        <Textarea
-            v-model="form.text"
-            rows="3"
-            autoResize
-            placeholder="Optional Description / Notes"
-            class="w-full"
-        />
-      </div>
-
-      <!-- Submit -->
-      <div>
-        <Button type="submit" label="Protect via blockchain" icon="pi pi-lock" />
+        <!-- кнопка знизу -->
+        <div class="pt-4">
+          <Button type="submit" label="Protect via blockchain" icon="pi pi-lock" class="w-full" />
+        </div>
       </div>
     </form>
-
-    <!-- Success Dialog -->
-    <Dialog v-model:visible="isSuccess" modal header="Success" :closable="false">
-      <div class="p-text-center">
-        <i class="pi pi-check-circle" style="font-size: 4rem; color: green;" />
-        <h3>Draft successfully created</h3>
-        <p>Once the patient completes the payment, the data will be recorded on the blockchain.</p>
-        <Button label="Protect another certificate" @click="resetForm" />
-      </div>
-    </Dialog>
   </div>
 </template>
+
+
 
 
 <script setup>
