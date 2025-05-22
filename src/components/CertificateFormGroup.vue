@@ -1,26 +1,30 @@
 <template>
-  <div class="p-4 flex flex-column gap-5" style="overflow-y: auto; max-height: 100vh;">
+  <div class="p-4" style="height: 100vh; overflow-y: auto;">
+    <div class="grid formgrid">
+      <!-- 🔐 Картка з формою -->
+      <div class="col-12 md:col-6">
+        <Card>
+          <template #title>
+            Protect Certificate
+          </template>
+          <template #content>
+            <CertificateForm />
+          </template>
+        </Card>
+      </div>
 
-    <!-- 🔐 Основна форма в картці -->
-    <Card>
-      <template #title>
-        Protect Certificate
-      </template>
-      <template #content>
-        <CertificateForm />
-      </template>
-    </Card>
-
-    <!-- ➕ Додаткова форма в картці -->
-    <Card>
-      <template #title>
-        Second Action (e.g. Revoke / Preview)
-      </template>
-      <template #content>
-        <TransactionsTable />
-      </template>
-    </Card>
-
+      <!-- 📋 Картка з таблицею -->
+      <div class="col-12 md:col-6">
+        <Card>
+          <template #title>
+            Recent Certificates
+          </template>
+          <template #content>
+            <TransactionsTable />
+          </template>
+        </Card>
+      </div>
+    </div>
   </div>
 </template>
 
