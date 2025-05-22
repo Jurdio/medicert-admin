@@ -1,101 +1,66 @@
 <template>
-   <DataTable
-        :value="certificates"
-        paginator
-        :rows="5"
-        tableStyle="min-width: 100%"
-    >
-      <Column field="id" header="ID" />
-
-      <Column header="Patient">
-        <template #body="{ data }">
-          <div class="flex align-items-center gap-2">
-            <Avatar
-                :label="getInitials(data.patient)"
-                shape="circle"
-                style="background: #e0e0ff; color: #3f3f9f"
-            />
-            <span>{{ data.patient }}</span>
+   <div class="flex flex-column gap-3">
+      <div
+          v-for="cert in displayedCertificates"
+          :key="cert.id"
+          class="flex justify-content-between align-items-center border-bottom-1 pb-2"
+      >
+        <!-- Left info -->
+        <div class="flex align-items-start gap-2">
+          <i class="pi pi-calendar text-primary" style="font-size: 1.2rem" />
+          <div>
+            <div class="font-medium text-md">{{ cert.patient }}</div>
+            <div class="text-sm text-500">{{ cert.type }} · {{ cert.date }}</div>
           </div>
-        </template>
-      </Column>
+        </div>
 
-      <Column field="type" header="Type" />
+        <!-- Status tag -->
+        <Tag
+            :value="cert.status"
+            :severity="getTagSeverity(cert.status)"
+            class="text-sm"
+        />
+      </div>
+    </div>
 
-      <Column field="date" header="Issued" />
-
-      <Column field="status" header="Status">
-        <template #body="{ data }">
-          <Tag
-              :value="data.status"
-              :severity="data.status === 'Minted' ? 'success' : 'info'"
-          />
-        </template>
-      </Column>
-
-      <Column field="hash" header="Hash">
-        <template #body="{ data }">
-          <span class="text-sm text-gray-700">{{ data.hash.slice(0, 10) + '...' }}</span>
-        </template>
-      </Column>
-    </DataTable>
+    <!-- View more button -->
+    <div class="mt-3" v-if="certificates.length > 8">
+      <Button label="View more" class="p-button-outlined w-full" />
+    </div>
 </template>
 
 <script setup>
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Tag from 'primevue/tag'
-import Avatar from 'primevue/avatar'
 import Card from 'primevue/card'
+import Tag from 'primevue/tag'
+import Button from 'primevue/button'
+import { computed } from 'vue'
 
 const certificates = [
-  {
-    id: '#1001',
-    patient: 'Anna Fali',
-    type: 'Medical Certificate',
-    date: 'May 14th',
-    status: 'Minted',
-    hash: 'bafkreigh2akiscaildc6u64lxmpwhzjqxku2wjxyhb2jkafgnl2kp3jlbe'
-  },
-  {
-    id: '#1002',
-    patient: 'Stepen Shaw',
-    type: 'Vaccination Proof',
-    date: 'May 15th',
-    status: 'Pending',
-    hash: 'bafkreicjd2a32lfkjwlkejx9xwpzua4djcoaa3sycgfwc37l5xmkckfq7m'
-  },
-  {
-    id: '#1003',
-    patient: 'Amy Yelsner',
-    type: 'Workplace Clearance',
-    date: 'May 16th',
-    status: 'Minted',
-    hash: 'bafkreihsbdkq283ndskfja289djssjd93msndkl23k3jkl923j4jkdfk'
-  },
-  {
-    id: '#1004',
-    patient: 'Lisa Andrews',
-    type: 'School Clearance',
-    date: 'May 17th',
-    status: 'Pending',
-    hash: 'bafkreiwu2vndke893jdnakslqwe89dl234lkasd9qwe98q9dkqweod'
-  },
-  {
-    id: '#1005',
-    patient: 'John Smith',
-    type: 'Medical Certificate',
-    date: 'May 18th',
-    status: 'Minted',
-    hash: 'bafkreigjqpwoeiruqpowruqo2n3n4kn2n34k23jn4k23jk4n23jk4n2'
-  }
+  { patient: 'Іван Петров', type: 'Medical', date: '2025-05-21', status: 'Minted' },
+  { patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid' },
+  { patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
+  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
+  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
+  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
+  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
+  {patient: 'Павло Романюк', type: 'Work', date: '2025-05-19', status: 'Draft'},
+  {patient: 'Ірина Яремчук', type: 'Medical', date: '2025-05-18', status: 'Minted'}
 ]
 
-function getInitials(name) {
-  return name
-      .split(' ')
-      .map(w => w[0])
-      .join('')
-      .toUpperCase()
+const displayedCertificates = computed(() =>
+    certificates.slice(0, 8)
+)
+
+function getTagSeverity(status) {
+  switch (status) {
+    case 'Minted':
+      return 'success'
+    case 'Paid':
+      return 'info'
+    case 'Draft':
+      return 'warning'
+    default:
+      return 'secondary'
+  }
 }
 </script>
