@@ -37,12 +37,10 @@ const sections = {
   favorites: {
     label: 'Favorites',
     buttons: [
-      { label: 'Account', icon: 'pi pi-user' },
-      { label: 'Permissions', icon: 'pi pi-lock' },
-      { label: 'Saved Profiles', icon: 'pi pi-users' },
-      { label: 'Privacy', icon: 'pi pi-eye' }
+      { label: 'Protect', icon: 'pi pi-lock' },
+      { label: 'Verify', icon: 'pi pi-eye' },
+      { label: 'History', icon: 'pi pi-history' },
     ]
   },
-  // інші секції за бажанням...
 }
 </script>
