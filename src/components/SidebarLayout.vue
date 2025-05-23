@@ -11,7 +11,7 @@
         :activeButton="activeButton"
         :selectButton="(label) => activeButton = label"
     />
-    <main class="flex-grow-1 p-0 m-0">
+    <main class="flex-grow-1 p-0 m-0" style="height: 100vh; overflow-y: auto;">
       <slot />
     </main>
   </div>
