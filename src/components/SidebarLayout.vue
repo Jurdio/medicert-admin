@@ -37,10 +37,10 @@ const sections = {
   favorites: {
     label: 'Favorites',
     buttons: [
-      { label: 'Protect', icon: 'pi pi-lock' },
-      { label: 'Verify', icon: 'pi pi-eye' },
-      { label: 'History', icon: 'pi pi-history' },
+      { label: 'Protect', icon: 'pi pi-lock', route: '/protection' },
+      { label: 'Verify', icon: 'pi pi-eye', route: '/verify' },
+      { label: 'History', icon: 'pi pi-history', route: '/history' }
     ]
-  },
+  }
 }
 </script>
