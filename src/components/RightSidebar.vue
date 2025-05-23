@@ -1,27 +1,27 @@
 <template>
-  <aside class="right-sidebar">
+  <aside class="right-sidebar" v-if="activeSection">
     <div class="section-title">{{ activeSection.label }}</div>
     <div class="nav-buttons">
       <div
-          v-for="btn in activeSection?.buttons"
+          v-for="btn in activeSection.buttons"
           :key="btn.label"
           class="nav-btn"
-          :class="{ active: activeButton === btn.label }"
+          :class="{ active: route.path === btn.route }"
           @click="() => handleClick(btn)"
       >
         <i :class="btn.icon"></i>
         <span>{{ btn.label }}</span>
       </div>
-
     </div>
   </aside>
 </template>
 
 <script setup>
 import { computed, defineProps } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 const props = defineProps({
   sections: Object,
@@ -34,7 +34,7 @@ const activeSection = computed(() => props.sections[props.selectedKey])
 
 function handleClick(btn) {
   props.selectButton(btn.label)
-  if (btn.route) {
+  if (btn.route && route.path !== btn.route) {
     router.push(btn.route)
   }
 }

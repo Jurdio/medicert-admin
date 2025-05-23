@@ -18,12 +18,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import LeftSidebar from './LeftSidebar.vue'
 import RightSidebar from './RightSidebar.vue'
 
+const route = useRoute()
+
 const selectedKey = ref('favorites')
-const activeButton = ref('Account')
+const activeButton = ref('Protect') // значення за замовчуванням
 
 const leftItems = [
   { key: 'favorites', icon: 'pi pi-home' },
@@ -43,4 +46,15 @@ const sections = {
     ]
   }
 }
+watch(
+    () => route.path,
+    (newPath) => {
+      const currentSection = sections[selectedKey.value]
+      const matchedBtn = currentSection?.buttons.find((b) => b.route === newPath)
+      if (matchedBtn) {
+        activeButton.value = matchedBtn.label
+      }
+    },
+    { immediate: true }
+)
 </script>
