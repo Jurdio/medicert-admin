@@ -1,6 +1,5 @@
 <template>
   <div class="issued-history-wrapper">
-    <h2 class="title">📄 Issued Certificates</h2>
 
     <DataTable
         :value="drafts"
