@@ -1,29 +1,72 @@
-# untitled3
+# 🩺 MediCert Admin
 
-This template should help get you started developing with Vue 3 in Vite.
+**MediCert Admin** is a web-based admin panel for medical professionals to issue and verify blockchain-protected medical certificates as NFTs. It is part of the MediCert ecosystem — a decentralized medical documentation platform built on trust, transparency, and modern Web3 infrastructure.
 
-## Recommended IDE Setup
+---
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 🚀 Features
 
-## Customize configuration
+- 🔒 **Protect Certificate**: Upload medical documents, assign to a wallet, and mint NFTs on the blockchain.
+- ✅ **Verify Certificate**: Validate authenticity by certificate hash or ID.
+- 🕓 **History View**: Browse the full list of previously issued certificates, including status and metadata.
+- 🧾 **PDF Upload Support**: Easy drag-and-drop PDF upload for medical forms.
+- 🖥️ **Admin UI**: Intuitive interface built with PrimeVue & Vue 3.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+---
 
-## Project Setup
+## 📸 Screenshots
+<img src="./docs/img.png" alt="Protect Certificate" width="100%" />
+<img src="./docs/img_1.png" alt="Protect Certificate" width="100%" />
+<img src="./docs/img_2.png" alt="Protect Certificate" width="100%" />
 
-```sh
+---
+
+## 🛠️ Tech Stack
+
+- ⚙️ **Vue 3 + Vite** – Fast modern frontend setup
+- 💠 **PrimeVue** – Clean component library
+- 🌐 **REST API** – Integration with MediCert backend
+- ⛓️ **NFT-ready** – Blockchain-aware UX for certificate minting
+
+---
+
+## 📦 Getting Started
+
+```bash
+git clone https://github.com/Jurdio/medicert-admin.git
+cd medicert-admin
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
+---
+## 🌍 Configuration
+Create a .env file in the root directory:
 ```
+VITE_SERVER_ADDRESS=https://your-api-domain.com
+```
+---
+📁 Project Structure
+```
+src/
+├── components/       # Reusable components (Sidebar, Tables, Forms)
+├── views/            # Main page views: Protect, Verify, History
+├── assets/           # Images, icons
+├── router/           # Route definitions
+└── main.js           # App entry point
+```
+---
+## 🧠 Roadmap
+Authentication & role management
+
+QR-based certificate validation
+
+Metadata preview before minting
+
+Export to PDF/JSON
+---
+## 🧑‍⚕️ Author
+Made with ❤️ by @Jurdio
+---
+## 📜 License
+MIT License – feel free to fork, adapt, or build upon it.
+
