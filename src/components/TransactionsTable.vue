@@ -36,16 +36,17 @@ import Button from 'primevue/button'
 import { computed } from 'vue'
 
 const certificates = [
-  { patient: 'Іван Петров', type: 'Medical', date: '2025-05-21', status: 'Minted' },
-  { patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid' },
-  { patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
-  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
-  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
-  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
-  {patient: 'Олена Коваль', type: 'Vaccine', date: '2025-05-20', status: 'Paid'},
-  {patient: 'Павло Романюк', type: 'Work', date: '2025-05-19', status: 'Draft'},
-  {patient: 'Ірина Яремчук', type: 'Medical', date: '2025-05-18', status: 'Minted'}
-]
+  { patient: 'John Peterson',    type: 'Medical', date: '2025-05-24', status: 'Minted' },
+  { patient: 'Emily Carter',     type: 'Vaccine', date: '2025-05-23', status: 'Paid' },
+  { patient: 'Liam Thompson',    type: 'Travel',  date: '2025-05-22', status: 'Revoked' },
+  { patient: 'Sophia Reynolds',  type: 'Work',    date: '2025-05-21', status: 'Draft' },
+  { patient: 'Mason Lee',        type: 'School',  date: '2025-05-20', status: 'Minted' },
+  { patient: 'Ava Mitchell',     type: 'Medical', date: '2025-05-19', status: 'Paid' },
+  { patient: 'Noah Scott',       type: 'Vaccine', date: '2025-05-18', status: 'Draft' },
+  { patient: 'Olivia Davis',     type: 'Travel',  date: '2025-05-17', status: 'Revoked' },
+  { patient: 'Elijah Morgan',    type: 'Work',    date: '2025-05-16', status: 'Minted' }
+];
+
 
 const displayedCertificates = computed(() =>
     certificates.slice(0, 8)

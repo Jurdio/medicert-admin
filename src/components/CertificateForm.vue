@@ -1,10 +1,9 @@
 <template>
   <div class="p-fluid" style="max-width: 600px; margin: 0 auto;">
-
     <form @submit.prevent="mintNFT" class="flex flex-column gap-3">
       <!-- Public Key -->
       <InputGroup class="p-inputgroup-sm">
-        <InputGroupAddon><i class="pi pi-key" /></InputGroupAddon>
+        <InputGroupAddon><i class="pi pi-key"></i></InputGroupAddon>
         <InputText
             v-model="form.publicKey"
             placeholder="Patient Wallet"
@@ -15,7 +14,7 @@
 
       <!-- Phone -->
       <InputGroup class="p-inputgroup-sm">
-        <InputGroupAddon><i class="pi pi-phone" /></InputGroupAddon>
+        <InputGroupAddon><i class="pi pi-phone"></i></InputGroupAddon>
         <InputMask
             v-model="form.phone"
             mask="+999 999 999 9999"
@@ -39,7 +38,6 @@
       <!-- Description -->
       <Textarea
           v-model="form.text"
-          :autoResize="false"
           rows="4"
           placeholder="Optional Description / Notes"
           class="p-input-sm w-full"
@@ -51,13 +49,11 @@
           name="pdf"
           accept="application/pdf"
           mode="advanced"
-          :auto="false"
+          :auto="true"
           :multiple="false"
           :showUploadButton="false"
           :showCancelButton="false"
-          customUpload
           @select="onSelect"
-          @uploader="noop"
           :maxFileSize="10000000"
           class="p-input-sm w-full"
           chooseLabel="Choose or Drag PDF"
@@ -69,86 +65,89 @@
           label="Protect via blockchain"
           icon="pi pi-lock"
           class="p-button-md w-full mt-2"
+          :disabled="loading"
       />
     </form>
   </div>
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import axios from 'axios'
+import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
-import InputText from 'primevue/inputtext'
-import InputMask from 'primevue/inputmask'
-import Dropdown from 'primevue/dropdown'
-import Textarea from 'primevue/textarea'
-import FileUpload from 'primevue/fileupload'
-import Button from 'primevue/button'
-import Dialog from 'primevue/dialog'
-import InputGroup from 'primevue/inputgroup'
+/* PrimeVue компоненти — імпорт по одному (v3) */
+import InputText       from 'primevue/inputtext'
+import InputMask       from 'primevue/inputmask'
+import Dropdown        from 'primevue/dropdown'
+import Textarea        from 'primevue/textarea'
+import FileUpload      from 'primevue/fileupload'
+import Button          from 'primevue/button'
+import InputGroup      from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import {useToast} from 'primevue/usetoast'
 
-const toast = useToast()
+/* Toast + простий стейт */
+const toast   = useToast()
+const loading = ref(false)
+const fileUploader = ref(null)
 
-const form = ref({publicKey: '', phone: '', type: '', text: '', file: null})
-const isSuccess = ref(false)
-const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS
+const form = ref({
+  publicKey: '',
+  phone:     '',
+  type:      '',
+  text:      '',
+  file:      null
+})
 
+/* типи сертифікатів */
 const certificateTypes = [
-  {label: 'Medical Certificate', value: 'medical'},
-  {label: 'Vaccination Proof', value: 'vaccine'},
-  {label: 'Workplace Clearance', value: 'work'},
-  {label: 'School Clearance', value: 'school'}
+  { label: 'Medical Certificate',   value: 'medical' },
+  { label: 'Vaccination Proof',     value: 'vaccine' },
+  { label: 'Workplace Clearance',   value: 'work'    },
+  { label: 'School Clearance',      value: 'school'  }
 ]
 
-function onSelect({files, options}) {
+/* 1. Вибір файлу — валідація PDF */
+function onSelect ({ files }) {
   const file = files?.[0]
   if (!file || file.type !== 'application/pdf') {
-    toast.add({severity: 'warn', summary: 'Only PDF files allowed', life: 3000})
-    options.clear()
+    toast.add({ severity:'warn', summary:'Only PDF files allowed', life:3000 })
+    fileUploader.value.clear()              // прибираємо рядок
     return
   }
   form.value.file = file
+  toast.add({ severity:'info', summary:'PDF selected', detail:file.name, life:2000 })
 }
 
-const noop = (e) => e.options.clear()
+/* 2. Кастомний uploader — імітуємо завантаження */
+function onUpload (event) {
+  // "Затримка" 1 с, далі помічаємо progress = 100
+  setTimeout(() => {
+    event.files.forEach(f => (f.progress = 100))   // ✅ Uploaded
+    toast.add({ severity:'success', summary:'Uploaded (mock)', life:2000 })
+    // Якщо треба прибрати рядок — раскоментуйте:
+    // fileUploader.value.clear()
+  }, 1000)
+}
 
-async function mintNFT() {
+/* 3. Submit (mock-версія) */
+async function mintNFT () {
   if (!form.value.file) {
-    toast.add({severity: 'warn', summary: 'Upload PDF', life: 3000})
+    toast.add({ severity:'warn', summary:'Upload PDF first', life:3000 })
     return
   }
 
+  loading.value = true
   try {
-    const fd = new FormData()
-    fd.append('file', form.value.file)
-    const {data: {ipfs_hash}} = await axios.post(`${SERVER_ADDRESS}/v1/ipfs/files`, fd)
-
-    const metadata = {
-      name: 'Medical Certificate',
-      symbol: 'MEDCERT',
-      description: form.value.text || 'Medical certificate',
-      file: `ipfs://${ipfs_hash}`
-    }
-    const {data: meta} = await axios.post(`${SERVER_ADDRESS}/v1/ipfs/metadata`, metadata)
-
-    await axios.post(`${SERVER_ADDRESS}/v1/nft/draft`, {
-      publicKey: form.value.publicKey,
-      phone: form.value.phone,
-      type: form.value.type,
-      metadataHash: meta.ipfs_hash || meta.hash || ''
-    })
-
-    isSuccess.value = true
-  } catch (err) {
-    console.error(err)
-    toast.add({severity: 'error', summary: 'Error creating certificate', life: 4000})
-  }
-}
-
-function resetForm() {
-  form.value = {publicKey: '', phone: '', type: '', text: '', file: null}
-  isSuccess.value = false
+    await new Promise(r => setTimeout(r, 1500))   // штучна затримка
+    toast.add({ severity:'success', summary:'Certificate draft created', life:3000 })
+  } finally { loading.value = false }
 }
 </script>
+
+<style scoped>
+/* ⬇️ Не ховаємо content, щоб бачити список. Якщо раптом треба без списку — раскоментуйте
+.custom-uploader .p-fileupload-content {
+  display: none !important;
+}
+*/
+</style>

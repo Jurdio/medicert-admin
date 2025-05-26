@@ -48,20 +48,29 @@ async function verify() {
   result.value = null
 
   try {
-    const response = await fetch(`/api/nft/verify?hash=${encodeURIComponent(hash.value)}`)
-    const data = await response.json()
-    result.value = data
-  } catch (e) {
-    result.value = {
-      valid: false,
-      issuer: '-',
-      patient: '-',
-      date: '-'
+    // Тимчасово перевіряємо локально
+    await new Promise(resolve => setTimeout(resolve, 1000)) // затримка для ефекту
+
+    if (hash.value === 'df2a64e8f7b8413d9f0ab676b1cd9b32') {
+      result.value = {
+        valid: true,
+        issuer: 'Dr. Evelyn Shaw',
+        patient: 'Liam Thompson',
+        date: '2025-05-22'
+      }
+    } else {
+      result.value = {
+        valid: false,
+        issuer: '-',
+        patient: '-',
+        date: '-'
+      }
     }
   } finally {
     loading.value = false
   }
 }
+
 </script>
 
 <style scoped>
