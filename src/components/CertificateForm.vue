@@ -1,5 +1,9 @@
 <template>
-  <div class="p-fluid" style="max-width: 600px; margin: 0 auto;">
+  <div
+      class="p-fluid"
+      style="max-width: 600px; margin: 0 auto;"
+      :class="{ 'blur-overlay': showSuccess }"
+  >
     <form @submit.prevent="mintNFT" class="flex flex-column gap-3">
       <!-- Public Key -->
       <InputGroup class="p-inputgroup-sm">
@@ -68,23 +72,24 @@
           :disabled="loading"
       />
     </form>
+    <!-- ====== МОДАЛЬНЕ ВІКНО ====== -->
     <Dialog
         v-model:visible="showSuccess"
         modal
-        header="Сертифікат збережено"
-        :closable="false"
-        class="w-full sm:w-20rem"
+    header="Сертифікат збережено"
+    :closable="false"
+    class="w-full sm:w-20rem"
     >
-      <div class="flex flex-column align-items-center gap-3 py-3">
-        <i class="pi pi-check-circle" style="font-size:3rem"></i>
-        <p class="m-0 text-center">Усе пройшло успішно!</p>
-        <Button
-            label="Згенерувати ще один"
-            icon="pi pi-refresh"
-            @click="resetForm"
-            class="p-button-sm w-full"
-        />
-      </div>
+    <div class="flex flex-column align-items-center gap-3 py-3">
+      <i class="pi pi-check-circle" style="font-size:3rem"></i>
+      <p class="m-0 text-center">Усе пройшло успішно!</p>
+      <Button
+          label="Згенерувати ще один"
+          icon="pi pi-refresh"
+          @click="resetForm"
+          class="p-button-sm w-full"
+      />
+    </div>
     </Dialog>
   </div>
 </template>
@@ -155,3 +160,17 @@ function resetForm () {
   showSuccess.value = false
 }
 </script>
+<style scoped>
+/* Коли showSuccess == true, форма (та все всередині wrapper’а) під діалогом блюриться */
+.blur-overlay {
+  filter: blur(4px);
+  transition: filter 0.3s;
+  pointer-events: none;   /* щоб не клікати крізь блюр */
+  user-select: none;
+}
+
+/* (опційно) підсилюємо базовий темний оверлей PrimeVue */
+.p-dialog-mask.p-component-overlay {
+  backdrop-filter: blur(2px);   /* ще трохи «скла» на затемненому фоні */
+}
+</style>
