@@ -47,7 +47,7 @@ import Button            from 'primevue/button'
 import CertificateForm   from '@/components/CertificateForm.vue'
 import TransactionsTable from '@/components/TransactionsTable.vue'
 
-const showSuccess = ref(true)
+const showSuccess = ref(false)
 function resetFlow () { showSuccess.value = false }
 </script>
 
@@ -59,7 +59,7 @@ function resetFlow () { showSuccess.value = false }
   inset: 0;
   padding: 1.5rem;
   background: rgba(255,255,255,.6);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
   border-radius: 1rem;
   box-shadow: 0 4px 16px rgba(0,0,0,.1);
   justify-content: center;
