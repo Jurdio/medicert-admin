@@ -68,6 +68,24 @@
           :disabled="loading"
       />
     </form>
+    <Dialog
+        v-model:visible="showSuccess"
+        modal
+        header="Сертифікат збережено"
+        :closable="false"
+        class="w-full sm:w-20rem"
+    >
+      <div class="flex flex-column align-items-center gap-3 py-3">
+        <i class="pi pi-check-circle" style="font-size:3rem"></i>
+        <p class="m-0 text-center">Усе пройшло успішно!</p>
+        <Button
+            label="Згенерувати ще один"
+            icon="pi pi-refresh"
+            @click="resetForm"
+            class="p-button-sm w-full"
+        />
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -75,7 +93,7 @@
 import { ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
-/* PrimeVue компоненти — імпорт по одному (v3) */
+/* PrimeVue компоненти */
 import InputText       from 'primevue/inputtext'
 import InputMask       from 'primevue/inputmask'
 import Dropdown        from 'primevue/dropdown'
@@ -84,21 +102,22 @@ import FileUpload      from 'primevue/fileupload'
 import Button          from 'primevue/button'
 import InputGroup      from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
+import Dialog          from 'primevue/dialog'
 
-/* Toast + простий стейт */
-const toast   = useToast()
-const loading = ref(false)
+const toast        = useToast()
+const loading      = ref(false)
 const fileUploader = ref(null)
+const showSuccess  = ref(false)          // <- стейт модалки
 
-const form = ref({
+const blankForm = () => ({
   publicKey: '',
   phone:     '',
   type:      '',
   text:      '',
   file:      null
 })
+const form = ref(blankForm())
 
-/* типи сертифікатів */
 const certificateTypes = [
   { label: 'Medical Certificate',   value: 'medical' },
   { label: 'Vaccination Proof',     value: 'vaccine' },
@@ -106,48 +125,33 @@ const certificateTypes = [
   { label: 'School Clearance',      value: 'school'  }
 ]
 
-/* 1. Вибір файлу — валідація PDF */
 function onSelect ({ files }) {
   const file = files?.[0]
   if (!file || file.type !== 'application/pdf') {
     toast.add({ severity:'warn', summary:'Only PDF files allowed', life:3000 })
-    fileUploader.value.clear()              // прибираємо рядок
+    fileUploader.value.clear()
     return
   }
   form.value.file = file
   toast.add({ severity:'info', summary:'PDF selected', detail:file.name, life:2000 })
 }
 
-/* 2. Кастомний uploader — імітуємо завантаження */
-function onUpload (event) {
-  // "Затримка" 1 с, далі помічаємо progress = 100
-  setTimeout(() => {
-    event.files.forEach(f => (f.progress = 100))   // ✅ Uploaded
-    toast.add({ severity:'success', summary:'Uploaded (mock)', life:2000 })
-    // Якщо треба прибрати рядок — раскоментуйте:
-    // fileUploader.value.clear()
-  }, 1000)
-}
-
-/* 3. Submit (mock-версія) */
 async function mintNFT () {
   if (!form.value.file) {
     toast.add({ severity:'warn', summary:'Upload PDF first', life:3000 })
     return
   }
-
   loading.value = true
   try {
-    await new Promise(r => setTimeout(r, 1500))   // штучна затримка
-    toast.add({ severity:'success', summary:'Certificate draft created', life:3000 })
+    await new Promise(r => setTimeout(r, 1500))  // імітація API-дзвінка
+    showSuccess.value = true                     // <-- відкриваємо модалку
   } finally { loading.value = false }
 }
-</script>
 
-<style scoped>
-/* ⬇️ Не ховаємо content, щоб бачити список. Якщо раптом треба без списку — раскоментуйте
-.custom-uploader .p-fileupload-content {
-  display: none !important;
+/* Скидаємо форму й ховаємо діалог */
+function resetForm () {
+  form.value = blankForm()
+  fileUploader.value?.clear?.()
+  showSuccess.value = false
 }
-*/
-</style>
+</script>
