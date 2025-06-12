@@ -16,9 +16,9 @@
                   class="overlay flex flex-column align-items-center gap-3"
               >
                 <i class="pi pi-check-circle" style="font-size:3rem"></i>
-                <p class="m-0 text-center">Усе пройшло успішно!</p>
+                <p class="m-0 text-center">Everything went well!</p>
                 <Button
-                    label="Згенерувати ще один"
+                    label="Generate another one"
                     icon="pi pi-refresh"
                     @click="resetFlow"
                     class="p-button-sm w-full"
