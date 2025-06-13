@@ -3,8 +3,7 @@
     <Card class="login-card">
       <template #title>
         <div class="logo-wrapper">
-          <img src="@/assets/logo.svg" alt="App Logo" class="logo" />
-          <h2 class="title">Connect your Wallet</h2>
+          <img src="@/assets/logo.svg" alt="App Logo" class="logo-large" />
         </div>
       </template>
 
@@ -18,9 +17,8 @@
         </div>
 
         <Button
-            label="Login with Phantom"
-            icon="pi pi-sign-in"
-            class="login-button"
+            label="Connect wallet"
+            class="connect-button"
             :disabled="!phantomDetected"
             @click="loginWithPhantom"
         />
@@ -84,23 +82,20 @@ async function loginWithPhantom() {
 
 .logo-wrapper {
   display: flex;
+  justify-content: center;
+}
+.logo-large {
+  width: 120px;
+  height: auto;
+  margin: 32px 0 16px 0;
+}
+
+.phantom-detected {
+  display: flex;
   flex-direction: column;
   align-items: center;
-}
-.logo {
-  width: 64px;
-  margin-bottom: 12px;
-}
-.title {
-  font-size: 20px;
-  color: #0d47a1;
-}
-
-.phantom-detected,
-.not-found {
   margin-bottom: 1rem;
 }
-
 .pulse-icon {
   font-size: 2rem;
   color: #1976d2;
@@ -109,20 +104,23 @@ async function loginWithPhantom() {
 .phantom-text {
   font-weight: 500;
   color: #1976d2;
+  margin-top: 0.5rem;
 }
 .not-found {
   color: #999;
+  margin-bottom: 1rem;
 }
 
-.login-button {
-  margin-top: 1rem;
+.connect-button {
   width: 100%;
+  padding: 1rem;
   font-weight: bold;
+  font-size: 1rem;
   background-color: #1976d2;
   border: none;
 }
 
-.login-button:disabled {
+.connect-button:disabled {
   background-color: #b0bec5;
   cursor: not-allowed;
 }
